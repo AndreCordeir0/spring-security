@@ -59,8 +59,10 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests((resquest)->{
-                    resquest.requestMatchers("/teste").hasAnyRole(ERoleEnum.ROLE_ADMIN.toString(), ERoleEnum.ROLE_ADMIN.toString())
-                            .anyRequest().authenticated();
+//                    resquest.anyRequest().permitAll();
+                    resquest.requestMatchers("/user/**").permitAll()
+                            .requestMatchers("/teste/oi").hasRole(ERoleEnum.ROLE_ADMIN.toString())
+                    .anyRequest().authenticated();
                 });
 
         http.authenticationProvider(authenticationProvider());

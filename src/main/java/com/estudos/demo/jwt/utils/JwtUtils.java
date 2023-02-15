@@ -13,6 +13,8 @@ import org.springframework.web.util.WebUtils;
 
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtils {
@@ -27,33 +29,16 @@ public class JwtUtils {
     @Value("${teste.app.jwtCookieName}")
     private String jwtCookie;
 
-    public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
-            return cookie.getValue();
-        } else {
-            return null;
-        }
-    }
 
-    public ResponseCookie generateJwtCookie(UserDetailImpl userPrincipal) {
-        String jwt = generateTokenFromUsername(userPrincipal.getUsername());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
-        return cookie;
-    }
 
-    public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
-        return cookie;
-    }
-
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    //RECUPERA USUARIO POR TOKEN
+    public String getUsuarioWithToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(jwtSecret).build().parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
@@ -67,9 +52,14 @@ public class JwtUtils {
 
         return false;
     }
-
-    public String generateTokenFromUsername(String username) {
+    public String generateToken(String username){
+        Map<String, Object> claim = new HashMap<String, Object>();
+        return generateTokenFromUsername(claim,username);
+    }
+    //GERA UM NOVO TOKEN
+    public String generateTokenFromUsername(Map<String, Object> claim , String username) {
         return Jwts.builder()
+                .setClaims(claim)
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
