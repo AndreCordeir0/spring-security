@@ -1,6 +1,7 @@
 package com.estudos.demo.model;
 
 
+import com.estudos.demo.converter.RoleConverter;
 import com.estudos.demo.enums.ERoleEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,7 +23,7 @@ public class Role {
     @Column(name="ID")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = RoleConverter.class)
     @Column(name = "ROLE")
     private ERoleEnum role;
 

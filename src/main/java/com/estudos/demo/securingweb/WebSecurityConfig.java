@@ -6,6 +6,7 @@ import com.estudos.demo.jwt.utils.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -59,8 +60,7 @@ public class WebSecurityConfig {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests((resquest)->{
-//                    resquest.anyRequest().permitAll();
-                    resquest.requestMatchers("/user/**").permitAll()
+                    resquest.requestMatchers(HttpMethod.POST,"/user/**").permitAll()
                             .requestMatchers("/teste/oi").hasRole(ERoleEnum.ROLE_ADMIN.toString())
                     .anyRequest().authenticated();
                 });
