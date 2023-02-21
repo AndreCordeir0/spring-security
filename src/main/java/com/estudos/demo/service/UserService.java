@@ -12,9 +12,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -56,20 +58,21 @@ public class UserService {
         if(verificarSenhaUsuario(user)){
             return jwtUtils.generateToken(user.getEmail());
         }
-        throw new RuntimeException("Email ou senha invalídos");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Email ou senha invalídos");
     }
 
 
     private Boolean verificarSenhaUsuario(User user){
         BCryptPasswordEncoder bc = new BCryptPasswordEncoder();
 
-        User userDataBase = userDAO.findByUsername(user.getEmail()).orElseThrow();
-        System.out.println(bc.matches(user.getPassword(), userDataBase.getPassword()));
-
-        if(bc.matches(user.getPassword(), userDataBase.getPassword())){
-            return true;
+        Optional<User> optionalUserDataBase = userDAO.findByUsername(user.getEmail());
+        if(optionalUserDataBase.isPresent()){
+            User userDataBase = optionalUserDataBase.get();
+            System.out.println(bc.matches(user.getPassword(), userDataBase.getPassword()));
+            if(bc.matches(user.getPassword(), userDataBase.getPassword())){
+                return true;
+            }
         }
-
         return false;
     }
 
