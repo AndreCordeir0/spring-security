@@ -12,8 +12,8 @@ public class RoleConverter implements AttributeConverter<ERoleEnum, String> {
     }
 
     @Override
-    public ERoleEnum convertToEntityAttribute(String s) {
-        System.out.println(s);
-        return ERoleEnum.ROLE_ADMIN;
+    public ERoleEnum convertToEntityAttribute(String role) {
+
+        return ERoleEnum.of(role);
     }
 }

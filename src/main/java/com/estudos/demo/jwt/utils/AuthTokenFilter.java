@@ -40,14 +40,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         String token = null;
         if (header == null || !header.startsWith(TOKEN_PREFIX)) {
             System.out.println("Header invalido.");
-            return;
+        }else{
+            token = header.substring(7);
+            try{
+                usuario = jwtUtils.getUsuarioWithToken(token);
+            }catch (Exception e){
+                System.out.println("Erro ao recuperar usuario por token");
+            }
         }
-         token = header.substring(7);
-        try{
-            usuario = jwtUtils.getUsuarioWithToken(token);
-        }catch (Exception e){
-            System.out.println("Erro ao recuperar usuario por token");
-        }
+
 
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
         if (Objects.nonNull(usuario) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
