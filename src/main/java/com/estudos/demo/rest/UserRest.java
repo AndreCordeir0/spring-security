@@ -16,10 +16,18 @@ public class UserRest {
     @Autowired
     UserService userService;
 
+
+
     @PostMapping("/adicionar")
     public ResponseEntity salvarUsuario(@RequestBody User user){
-        userService.salvarNovoUsuario(user);
+        User userCreated = userService.salvarNovoUsuario(user);
 
-        return null;
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity logarUsuario(@RequestBody User user){
+    String token = userService.gerarTokenParaUsuario(user);
+    return ResponseEntity.ok(token);
     }
 }

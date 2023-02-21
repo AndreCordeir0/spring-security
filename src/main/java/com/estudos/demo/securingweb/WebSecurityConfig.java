@@ -61,7 +61,8 @@ public class WebSecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests((resquest)->{
                     resquest.requestMatchers(HttpMethod.POST,"/user/**").permitAll()
-                            .requestMatchers("/teste/oi").hasRole(ERoleEnum.ROLE_ADMIN.toString())
+                            //POR ALGUM MOTIVO ESTÁ SENDO ADICIONADO UM ROLE_ por parte do spring, por isso está diferente da ENUM.
+                            .requestMatchers("/teste/oi").hasRole("ADMIN")
                     .anyRequest().authenticated();
                 });
 
